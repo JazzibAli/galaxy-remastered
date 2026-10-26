@@ -1,0 +1,93 @@
+README.md
+   ↓
+"What is this?"
+
+PROJECT.md
+   ↓
+"What are we building?"
+
+AI_CONTEXT.md
+   ↓
+"Where are we and how should development continue?"
+
+TODO.md
+   ↓
+"What needs to be done?"
+
+CHANGELOG.md
+   ↓
+"What has happened?"
+
+
+
+galaxy-remastered/
+│
+├── README.md
+├── PROJECT.md
+├── AI_CONTEXT.md
+├── CHANGELOG.md
+├── TODO.md
+├── LICENSE
+│
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── index.html
+│
+├── public/
+│   └── assets/
+│       ├── images/
+│       ├── audio/
+│       ├── fonts/
+│       └── data/
+│
+├── src/
+│   ├── main.ts
+│   │
+│   ├── game/
+│   │   ├── Game.ts
+│   │   ├── GameLoop.ts
+│   │   ├── GameState.ts
+│   │   └── SceneManager.ts
+│   │
+│   ├── entities/
+│   │   ├── Entity.ts
+│   │   ├── Player.ts
+│   │   ├── Enemy.ts
+│   │   ├── Projectile.ts
+│   │   ├── PowerUp.ts
+│   │   └── Boss.ts
+│   │
+│   ├── systems/
+│   │   ├── CollisionSystem.ts
+│   │   ├── SpawnSystem.ts
+│   │   ├── ParticleSystem.ts
+│   │   ├── WeaponSystem.ts
+│   │   └── ScoreSystem.ts
+│   │
+│   ├── rendering/
+│   │   ├── Renderer.ts
+│   │   ├── Starfield.ts
+│   │   ├── Effects.ts
+│   │   └── Camera.ts
+│   │
+│   ├── levels/
+│   │   ├── Level.ts
+│   │   ├── LevelManager.ts
+│   │   └── levels/
+│   │
+│   ├── audio/
+│   │   └── AudioManager.ts
+│   │
+│   ├── ui/
+│   │   ├── HUD.ts
+│   │   ├── MainMenu.ts
+│   │   ├── PauseMenu.ts
+│   │   └── UpgradeScreen.ts
+│   │
+│   └── config/
+│       └── GameConfig.ts
+│
+└── tests/
+    └── ...
+
