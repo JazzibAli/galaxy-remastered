@@ -13,8 +13,9 @@ export class PowerUpSystem {
     private readonly weaponDuration = 10000;
     private weaponTimeLeft = 0;
 
-    maybeDrop(x: number, y: number) {
-        if (Math.random() > this.dropChance) {
+    // chanceMultiplier lets tougher enemies drop more often
+    maybeDrop(x: number, y: number, chanceMultiplier = 1) {
+        if (Math.random() > this.dropChance * chanceMultiplier) {
             return;
         }
 

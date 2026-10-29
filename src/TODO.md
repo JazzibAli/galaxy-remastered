@@ -38,7 +38,7 @@
 ## Phase 3 — Arcade Gameplay
 
 - [x] Enemy formations
-- [ ] Multiple enemy types
+- [x] Multiple enemy types (grunt, scout, heavy)
 - [x] Enemy attack patterns
 - [x] Wave system
 - [x] Wave difficulty scaling

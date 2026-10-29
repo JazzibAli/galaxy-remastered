@@ -1,4 +1,5 @@
 import { Enemy } from '../entities/Enemy';
+import type { EnemyType } from '../entities/Enemy';
 
 export class SpawnSystem {
     private stage = 1;
@@ -95,11 +96,12 @@ export class SpawnSystem {
                 // Start above the screen; the centre enters first,
                 // giving a V-shaped entrance
                 const stagger = Math.abs(column - centerColumn) * 20;
-                const enemy = new Enemy(homeX, -60 - row * 55 - stagger);
+                const type = this.getEnemyType(rows - 1 - row);
+                const enemy = new Enemy(homeX, -60 - row * 55 - stagger, type);
 
                 enemy.homeX = homeX;
                 enemy.homeY = homeY;
-                enemy.speed = speed;
+                enemy.speed = speed * enemy.speedMultiplier;
 
                 enemies.push(enemy);
             }
@@ -108,6 +110,19 @@ export class SpawnSystem {
         // First dive of the wave comes after a short delay
         this.diveTimer = 0;
         this.nextDiveTime = this.getDiveInterval();
+    }
+
+    // Which enemy type fills a formation row. level 0 is the top row.
+    // Stage 1: grunts only. Stage 2: scouts lead. Stage 3+: heavies lead, scouts behind.
+    private getEnemyType(level: number): EnemyType {
+        if (this.stage >= 3) {
+            if (level === 0) return 'heavy';
+            if (level === 1) return 'scout';
+        } else if (this.stage === 2 && level === 0) {
+            return 'scout';
+        }
+
+        return 'grunt';
     }
 
     private updateDives(deltaTime: number, enemies: Enemy[]) {

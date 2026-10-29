@@ -1,15 +1,53 @@
 export type EnemyState = 'entering' | 'formation' | 'diving';
+export type EnemyType = 'grunt' | 'scout' | 'heavy';
+
+interface EnemyStats {
+    health: number;
+    width: number;
+    height: number;
+    speedMultiplier: number; // scales the stage's base enemy speed
+    points: number;
+    dropMultiplier: number;  // scales the power-up drop chance
+    diveWiggle: number;      // sideways swing of the dive S-curve, in px
+}
+
+const ENEMY_STATS: Record<EnemyType, EnemyStats> = {
+    grunt: { health: 1, width: 46, height: 32, speedMultiplier: 1,   points: 100, dropMultiplier: 1, diveWiggle: 60 },
+    scout: { health: 1, width: 38, height: 26, speedMultiplier: 1.4, points: 150, dropMultiplier: 1, diveWiggle: 90 },
+    heavy: { health: 3, width: 58, height: 40, speedMultiplier: 0.8, points: 300, dropMultiplier: 3, diveWiggle: 35 }
+};
+
+interface EnemyPalette {
+    light: string;
+    mid: string;
+    dark: string;
+    outline: string;
+    coreGlow: string;
+    core: string;
+    nodes: string;
+}
+
+const ENEMY_PALETTES: Record<EnemyType, EnemyPalette> = {
+    grunt: { light: '#ff5c5c', mid: '#8b1020', dark: '#350812', outline: '#ff3b30', coreGlow: '#ffb000', core: '#ffd000', nodes: '#ff6b00' },
+    scout: { light: '#ffd24d', mid: '#b36b00', dark: '#4a2a00', outline: '#ffb000', coreGlow: '#ffffff', core: '#fff4b0', nodes: '#ffe066' },
+    heavy: { light: '#c77dff', mid: '#5b21b6', dark: '#1e0b3d', outline: '#a855f7', coreGlow: '#ff2bd6', core: '#ff8af0', nodes: '#e879f9' }
+};
 
 export class Enemy {
     x: number;
     y: number;
 
-    width = 46;
-    height = 32;
+    type: EnemyType;
+
+    width: number;
+    height: number;
 
     // Base speed, set per stage by SpawnSystem. Entry and dive speeds scale from it.
     speed = 2;
-    health = 1;
+    health: number;
+    points: number;
+    speedMultiplier: number;
+    dropMultiplier: number;
 
     active = true;
 
@@ -23,19 +61,38 @@ export class Enemy {
     private diveStartY = 0;
     private diveTargetX = 0;
     private diveDirection = 1;
+    private diveWiggle: number;
+
+    // Frames left to flash white after a non-lethal hit
+    private hitFlash = 0;
 
     shootTimer = 1000 + Math.random() * 4000;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, type: EnemyType = 'grunt') {
+        const stats = ENEMY_STATS[type];
+
         this.x = x;
         this.y = y;
         this.homeX = x;
         this.homeY = y;
+
+        this.type = type;
+        this.width = stats.width;
+        this.height = stats.height;
+        this.health = stats.health;
+        this.points = stats.points;
+        this.speedMultiplier = stats.speedMultiplier;
+        this.dropMultiplier = stats.dropMultiplier;
+        this.diveWiggle = stats.diveWiggle;
     }
 
     // swayX:   current horizontal sway of the whole formation
     // playerX: used to aim dives
     update(swayX: number, playerX: number) {
+        if (this.hitFlash > 0) {
+            this.hitFlash--;
+        }
+
         if (this.state === 'entering') {
             this.updateEntering(swayX);
         } else if (this.state === 'formation') {
@@ -44,6 +101,12 @@ export class Enemy {
         } else {
             this.updateDiving(swayX, playerX);
         }
+    }
+
+    // Apply one laser hit. The caller checks health to see if it was destroyed.
+    takeHit() {
+        this.health -= 1;
+        this.hitFlash = 5;
     }
 
     // Break away from the formation and attack
@@ -89,7 +152,7 @@ export class Enemy {
         this.x =
             this.diveStartX +
             (this.diveTargetX - this.diveStartX) * aim +
-            Math.sin(aim * Math.PI * 2) * 60 * this.diveDirection;
+            Math.sin(aim * Math.PI * 2) * this.diveWiggle * this.diveDirection;
 
         this.x = Math.max(
             this.width / 2,
@@ -123,64 +186,102 @@ export class Enemy {
         return false;
     }
 
+    private traceBody(ctx: CanvasRenderingContext2D) {
+        if (this.type === 'scout') {
+            // Narrow dart
+            ctx.moveTo(0, 13);
+            ctx.lineTo(-19, -3);
+            ctx.lineTo(-10, -13);
+            ctx.lineTo(0, -7);
+            ctx.lineTo(10, -13);
+            ctx.lineTo(19, -3);
+        } else {
+            // Grunt body (the heavy uses the same shape, scaled up)
+            ctx.moveTo(-23, -8);
+            ctx.lineTo(-10, -16);
+            ctx.lineTo(0, -10);
+            ctx.lineTo(10, -16);
+            ctx.lineTo(23, -8);
+            ctx.lineTo(16, 10);
+            ctx.lineTo(0, 15);
+            ctx.lineTo(-16, 10);
+        }
+
+        ctx.closePath();
+    }
+
     draw(ctx: CanvasRenderingContext2D) {
+        const palette = ENEMY_PALETTES[this.type];
+        const flashing = this.hitFlash > 0;
+
         ctx.save();
 
         ctx.translate(this.x, this.y);
 
+        if (this.type === 'heavy') {
+            ctx.scale(1.25, 1.25);
+        }
+
         // Enemy glow
-        ctx.shadowColor = '#ff3b30';
+        ctx.shadowColor = flashing ? '#ffffff' : palette.outline;
         ctx.shadowBlur = 18;
 
         // Main body
         ctx.beginPath();
+        this.traceBody(ctx);
 
-        ctx.moveTo(-23, -8);
-        ctx.lineTo(-10, -16);
-        ctx.lineTo(0, -10);
-        ctx.lineTo(10, -16);
-        ctx.lineTo(23, -8);
-        ctx.lineTo(16, 10);
-        ctx.lineTo(0, 15);
-        ctx.lineTo(-16, 10);
+        if (flashing) {
+            ctx.fillStyle = '#ffffff';
+        } else {
+            const bodyGradient = ctx.createLinearGradient(0, -16, 0, 16);
 
-        ctx.closePath();
+            bodyGradient.addColorStop(0, palette.light);
+            bodyGradient.addColorStop(0.5, palette.mid);
+            bodyGradient.addColorStop(1, palette.dark);
 
-        const bodyGradient = ctx.createLinearGradient(
-            0,
-            -16,
-            0,
-            16
-        );
+            ctx.fillStyle = bodyGradient;
+        }
 
-        bodyGradient.addColorStop(0, '#ff5c5c');
-        bodyGradient.addColorStop(0.5, '#8b1020');
-        bodyGradient.addColorStop(1, '#350812');
-
-        ctx.fillStyle = bodyGradient;
         ctx.fill();
 
         // Neon outline
-        ctx.strokeStyle = '#ff3b30';
+        ctx.strokeStyle = flashing ? '#ffffff' : palette.outline;
         ctx.lineWidth = 2;
         ctx.stroke();
 
+        // Armor plating on the heavy
+        if (this.type === 'heavy') {
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(-12, -12);
+            ctx.lineTo(-6, 10);
+            ctx.moveTo(12, -12);
+            ctx.lineTo(6, 10);
+            ctx.stroke();
+        }
+
         // Energy core
-        ctx.shadowColor = '#ffb000';
+        ctx.shadowColor = palette.coreGlow;
         ctx.shadowBlur = 15;
 
-        ctx.beginPath();
-        ctx.arc(0, 0, 5, 0, Math.PI * 2);
+        const coreY = this.type === 'scout' ? -2 : 0;
+        const coreRadius = this.type === 'scout' ? 4 : 5;
 
-        ctx.fillStyle = '#ffd000';
+        ctx.beginPath();
+        ctx.arc(0, coreY, coreRadius, 0, Math.PI * 2);
+
+        ctx.fillStyle = palette.core;
         ctx.fill();
 
         // Side energy nodes
-        ctx.fillStyle = '#ff6b00';
+        const nodeX = this.type === 'scout' ? 12 : 15;
+        const nodeY = this.type === 'scout' ? -4 : 3;
+
+        ctx.fillStyle = palette.nodes;
 
         ctx.beginPath();
-        ctx.arc(-15, 3, 3, 0, Math.PI * 2);
-        ctx.arc(15, 3, 3, 0, Math.PI * 2);
+        ctx.arc(-nodeX, nodeY, 3, 0, Math.PI * 2);
+        ctx.arc(nodeX, nodeY, 3, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();

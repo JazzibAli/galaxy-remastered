@@ -1,5 +1,26 @@
 # Galaxy Remastered — Changelog
 
+## 2026-10-26 — Multiple Enemy Types
+
+### Added
+
+- `EnemyType`: `grunt`, `scout`, `heavy`, with stats and palettes in tables at the top of `Enemy.ts`.
+- Grunt (red): 1 hit, 100 points. The original enemy.
+- Scout (amber dart): 1 hit, 150 points, 1.4x speed, wide dive swing.
+- Heavy (violet armored): 3 hits, 300 points, 0.8x speed, narrow dive swing, 3x power-up drop chance.
+- `SpawnSystem.getEnemyType()` assigns types by formation row and stage: stage 1 grunts only, stage 2 scouts lead, stage 3+ heavies lead with scouts behind.
+- `Enemy.takeHit()` with a white hit flash, plus a small spark burst on non-lethal hits.
+- `PowerUpSystem.maybeDrop()` takes an optional drop-chance multiplier.
+
+### Changed
+
+- Score per kill is now `enemy.points` instead of a flat 100.
+- Enemy size (`width`, `height`) comes from the type, so collisions match each shape.
+
+### Next Milestone
+
+Combo scoring, then permanent weapon and shield upgrades.
+
 ## 2026-10-26 — Formations and Dive Attacks (restored)
 
 The `Enemy.ts` and `SpawnSystem.ts` shared this session did not contain the

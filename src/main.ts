@@ -303,10 +303,10 @@ function gameLoop() {
 
                 if (checkProjectileEnemyCollision(projectile, enemy)) {
                     projectile.active = false;
-                    enemy.health -= 1;
+                    enemy.takeHit();
 
                     if (enemy.health <= 0) {
-                        score += 100;
+                        score += enemy.points;
 
                         if (score > highScore) {
                             highScore = score;
@@ -314,11 +314,18 @@ function gameLoop() {
                         }
                         enemy.active = false;
 
-                        powerUpSystem.maybeDrop(enemy.x, enemy.y);
+                        powerUpSystem.maybeDrop(enemy.x, enemy.y, enemy.dropMultiplier);
 
                         particleSystem.createExplosion(
                             enemy.x,
                             enemy.y
+                        );
+                    } else {
+                        // Hit but not destroyed: small spark burst
+                        particleSystem.createExplosion(
+                            projectile.x,
+                            projectile.y,
+                            5
                         );
                     }
 

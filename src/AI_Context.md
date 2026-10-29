@@ -31,11 +31,11 @@ The game currently has:
 - Score and shield systems
 - Power-ups: shield repair and timed double shot (10% drop chance on kill)
 - Persistent high score (localStorage)
+- Three enemy types: grunt (red, 1 hit, 100 pts), scout (amber, fast, wide dive swing, 150 pts), heavy (violet, 3 hits, slow, 300 pts, 3x power-up drop chance). Types are assigned per formation row by stage (stage 1 grunts only, stage 2 scouts lead, stage 3+ heavies lead). Stats live in the table at the top of Enemy.ts.
 - Game over screen and restart (R)
 
 Not implemented yet:
 
-- Multiple enemy types
 - Combo/scoring mechanics
 - Permanent weapon and shield upgrades, special ability
 - Bosses
@@ -167,10 +167,9 @@ as they grow.
 
 Phase 3 remaining work:
 
-1. Multiple enemy types (for example scout and heavy)
-2. Combo/scoring mechanics
-3. Permanent weapon and shield upgrades
-4. Special ability
+1. Combo/scoring mechanics
+2. Permanent weapon and shield upgrades
+3. Special ability
 
 ---
 
