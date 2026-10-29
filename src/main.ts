@@ -96,6 +96,28 @@ const maxShield = 100;
 let shield = maxShield;
 let gameOver = false;
 
+const HIGH_SCORE_KEY = 'galaxy-remastered-highscore';
+
+function loadHighScore(): number {
+    try {
+        const value = Number(localStorage.getItem(HIGH_SCORE_KEY));
+        return Number.isFinite(value) && value > 0 ? value : 0;
+    } catch {
+        return 0;
+    }
+}
+
+function saveHighScore() {
+    try {
+        localStorage.setItem(HIGH_SCORE_KEY, String(highScore));
+    } catch {
+        // Storage unavailable (private mode, etc.): keep playing without saving
+    }
+}
+
+let highScore = loadHighScore();
+let newHighScore = false;
+
 if (shield <= 0) {
     gameOver = true;
 }
@@ -133,6 +155,15 @@ function drawHUD() {
     ctx.fillStyle = '#ffffff';
     //ctx.fillText('SCORE 000000', 25, 65);
     ctx.fillText(`SCORE ${String(score).padStart(6, '0')}`, 25, 65);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffd000';
+    ctx.fillText(
+        `HI-SCORE ${String(highScore).padStart(6, '0')}`,
+        canvas.width - 25,
+        35
+    );
+    ctx.textAlign = 'left';
 
     //ctx.fillStyle = '#ff2bd6';
     //ctx.fillText('SHIELD ██████████', 25, 95);
@@ -189,8 +220,20 @@ function drawGameOver() {
         canvas.height / 2 + 30
     );
 
+    ctx.fillStyle = '#ffd000';
+    ctx.fillText(
+        `HI-SCORE ${String(highScore).padStart(6, '0')}`,
+        canvas.width / 2,
+        canvas.height / 2 + 65
+    );
+
+    if (newHighScore) {
+        ctx.fillStyle = '#ff2bd6';
+        ctx.fillText('NEW HIGH SCORE!', canvas.width / 2, canvas.height / 2 + 100);
+    }
+
     ctx.fillStyle = '#00eaff';
-    ctx.fillText('PRESS R TO RESTART', canvas.width / 2, canvas.height / 2 + 70);
+    ctx.fillText('PRESS R TO RESTART', canvas.width / 2, canvas.height / 2 + 140);
 
     ctx.textAlign = 'left';
 }
@@ -199,6 +242,7 @@ function restartGame() {
     score = 0;
     shield = maxShield;
     gameOver = false;
+    newHighScore = false;
 
     enemies.length = 0;
     projectiles.length = 0;
@@ -263,6 +307,11 @@ function gameLoop() {
 
                     if (enemy.health <= 0) {
                         score += 100;
+
+                        if (score > highScore) {
+                            highScore = score;
+                            newHighScore = true;
+                        }
                         enemy.active = false;
 
                         powerUpSystem.maybeDrop(enemy.x, enemy.y);
@@ -329,6 +378,7 @@ function gameLoop() {
 
         if (shield <= 0) {
             gameOver = true;
+            saveHighScore();
         }
         for (let i = enemyProjectiles.length - 1; i >= 0; i--) {
             if (!enemyProjectiles[i].active) {
