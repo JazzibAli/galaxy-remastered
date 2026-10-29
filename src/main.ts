@@ -10,6 +10,7 @@ import { EnemyProjectile } from './entities/EnemyProjectile';
 //import { checkProjectileEnemyCollision, checkPlayerEnemyCollision } from './systems/CollisionSystem';
 import { checkProjectileEnemyCollision, checkPlayerEnemyCollision, checkEnemyProjectilePlayerCollision } from './systems/CollisionSystem';
 import { PowerUpSystem } from './systems/PowerUpSystem';
+import { ComboSystem } from './systems/ComboSystem';
 
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d')!;
@@ -89,6 +90,7 @@ const enemies: Enemy[] = [];
 const particleSystem = new ParticleSystem();
 const spawnSystem = new SpawnSystem();
 const powerUpSystem = new PowerUpSystem();
+const comboSystem = new ComboSystem();
 //const waveSystem = new WaveSystem();
 
 let score = 0;
@@ -164,6 +166,27 @@ function drawHUD() {
         35
     );
     ctx.textAlign = 'left';
+
+    if (comboSystem.isActive()) {
+        const barWidth = 140;
+        const barX = canvas.width - 25 - barWidth;
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#00eaff';
+        ctx.fillText(
+            `COMBO x${comboSystem.getMultiplier()}`,
+            canvas.width - 25,
+            65
+        );
+
+        // Timer bar: drains until the combo expires
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.fillRect(barX, 75, barWidth, 6);
+        ctx.fillStyle = '#ff2bd6';
+        ctx.fillRect(barX, 75, barWidth * comboSystem.getTimeFraction(), 6);
+
+        ctx.textAlign = 'left';
+    }
 
     //ctx.fillStyle = '#ff2bd6';
     //ctx.fillText('SHIELD ██████████', 25, 95);
@@ -254,6 +277,7 @@ function restartGame() {
     //waveSystem.reset();
     spawnSystem.reset();
     powerUpSystem.reset();
+    comboSystem.reset();
 }
 
 function gameLoop() {
@@ -306,7 +330,7 @@ function gameLoop() {
                     enemy.takeHit();
 
                     if (enemy.health <= 0) {
-                        score += enemy.points;
+                        score += enemy.points * comboSystem.registerKill();
 
                         if (score > highScore) {
                             highScore = score;
@@ -361,6 +385,7 @@ function gameLoop() {
             if (bullet.active && checkEnemyProjectilePlayerCollision(bullet, player)) {
                 bullet.active = false;
                 shield = Math.max(0, shield - 15);
+                comboSystem.breakCombo();
 
                 particleSystem.createExplosion(player.x, player.y);
             }
@@ -378,6 +403,7 @@ function gameLoop() {
             if (checkPlayerEnemyCollision(player, enemy)) {
                 enemy.active = false;
                 shield = Math.max(0, shield - 25);
+                comboSystem.breakCombo();
 
                 particleSystem.createExplosion(enemy.x, enemy.y);
             }
@@ -407,6 +433,8 @@ function gameLoop() {
     }
 
     if (!gameOver) {
+        comboSystem.update(deltaTime);
+
         const collected = powerUpSystem.update(deltaTime, player);
 
         for (const type of collected) {

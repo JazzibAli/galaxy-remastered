@@ -1,5 +1,24 @@
 # Galaxy Remastered — Changelog
 
+## 2026-10-26 — Combo Scoring
+
+### Added
+
+- `ComboSystem` (`src/systems/ComboSystem.ts`): kill-streak multiplier.
+- Each kill within 3 seconds of the previous one extends the streak and refreshes the timer.
+- Multiplier is x1, plus one level per 4 kills, capped at x5. A kill is scored with the multiplier shown at that moment, then the streak grows.
+- The combo resets when the timer runs out, when an enemy bullet hits the player, and when the player rams an enemy.
+- HUD shows `COMBO xN` with a draining timer bar at the top right, only while a streak is active.
+- Combo resets on restart and is paused while the game is over.
+
+### Changed
+
+- Kill score is now `enemy.points * multiplier`.
+
+### Next Milestone
+
+Permanent weapon and shield upgrades, then a special ability.
+
 ## 2026-10-26 — Multiple Enemy Types
 
 ### Added

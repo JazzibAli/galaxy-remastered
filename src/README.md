@@ -27,6 +27,7 @@ with modern visuals, effects, progression and gameplay.
 - Enemy fire, score, shield and game over
 - Power-ups: shield repair and timed double shot
 - Persistent high score
+- Combo scoring: chain kills for up to a x5 score multiplier
 
 ## Controls
 

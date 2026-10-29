@@ -42,7 +42,7 @@
 - [x] Enemy attack patterns
 - [x] Wave system
 - [x] Wave difficulty scaling
-- [ ] Combo/scoring mechanics
+- [x] Combo/scoring mechanics (kill-streak multiplier x1-x5)
 - [x] Power-ups (shield repair, double shot)
 - [ ] Weapon upgrades
 - [ ] Shield upgrades
