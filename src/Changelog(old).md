@@ -1,18 +1,5 @@
 # Galaxy Remastered — Changelog
 
-## 2026-10-26 — High Score
-
-### Added
-
-- Added a persistent high score saved in `localStorage` (key `galaxy-remastered-highscore`).
-- HUD shows `HI-SCORE` in the top-right corner and updates live when beaten.
-- Game-over screen shows the high score and a `NEW HIGH SCORE!` line when beaten.
-- Storage access is wrapped in try/catch, so the game still runs if storage is unavailable.
-
-### Next Milestone
-
-Multiple enemy types (pending current `Enemy.ts` / `SpawnSystem.ts`).
-
 ## 2026-10-26 — Power-ups
 
 ### Added
