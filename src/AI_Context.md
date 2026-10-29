@@ -22,7 +22,9 @@ The game currently has:
 - Animated starfield and neon HUD (score, high score, shield bar, stage/wave)
 - Player ship with WASD/arrow movement and Space to fire (with cooldown)
 - Stage system: stages contain waves, with a "STAGE COMPLETE" pause
-- Enemies spawn in grid-shaped waves, with per-stage difficulty scaling
+- Enemies fly into a swaying formation (entering / formation / diving states)
+- Galaxian-style S-curve dive attacks aimed at the player; divers re-enter from the top and rejoin the formation
+- Difficulty scaling per stage: bigger formations, faster enemies, more waves, more frequent and more simultaneous dives, faster fire
 - Enemy projectiles (enemies shoot at the player)
 - Collision detection (player lasers vs enemies, enemies vs player, enemy bullets vs player, player vs power-ups)
 - Explosions and particles
@@ -30,12 +32,6 @@ The game currently has:
 - Power-ups: shield repair and timed double shot (10% drop chance on kill)
 - Persistent high score (localStorage)
 - Game over screen and restart (R)
-
-NOTE TO NEXT AI: CHANGELOG.md (2026-10-07) describes swaying formations
-with entering/formation/diving states and dive attacks. The Enemy.ts and
-SpawnSystem.ts shared on 2026-10-26 do NOT contain them (enemies move
-straight down). Confirm with the developer which version is current
-before changing enemy movement or spawning.
 
 Not implemented yet:
 

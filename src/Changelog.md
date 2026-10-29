@@ -1,5 +1,30 @@
 # Galaxy Remastered — Changelog
 
+## 2026-10-26 — Formations and Dive Attacks (restored)
+
+The `Enemy.ts` and `SpawnSystem.ts` shared this session did not contain the
+formation work described in the 2026-10-07 entry (enemies flew straight down),
+so it was rebuilt.
+
+### Added
+
+- `Enemy` now has `entering`, `formation` and `diving` states, with a home slot (`homeX`, `homeY`).
+- Enemies fly in from above (V-shaped entrance), then hold a swaying formation.
+- `SpawnSystem` owns the shared sway (`getSwayX()`) and launches dives on a timer.
+- Dives: an enemy breaks formation, aims at the player, then commits to its course (S-curve). If it misses it re-enters from the top and rejoins the formation.
+- Dive frequency and the number of simultaneous divers scale with the stage.
+- Enemies only fire in `formation` or `diving` state. Divers fire at the full rate, formation enemies at a quarter of it.
+
+### Changed
+
+- Enemies are no longer removed for leaving the screen; a wave ends only when all its enemies are destroyed.
+- `main.ts`: `enemy.update()` is now `enemy.update(spawnSystem.getSwayX(), player.x)`.
+- `SpawnSystem.ts`: removed the large commented-out legacy class.
+
+### Next Milestone
+
+Multiple enemy types.
+
 ## 2026-10-26 — High Score
 
 ### Added

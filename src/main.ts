@@ -336,7 +336,7 @@ function gameLoop() {
 
     for (const enemy of enemies) {
         if (!gameOver) {
-            enemy.update();
+            enemy.update(spawnSystem.getSwayX(), player.x);
 
             if (enemy.y > 0 && enemy.tryShoot(deltaTime, shootInterval)) {
                 enemyProjectiles.push(
