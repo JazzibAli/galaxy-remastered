@@ -9,8 +9,8 @@ export class Player {
     speed = 6;
 
     constructor(
-        private canvasWidth: number,
-        private canvasHeight: number
+        canvasWidth: number,
+        canvasHeight: number
     ) {
         this.x = canvasWidth / 2;
         this.y = canvasHeight - 100;

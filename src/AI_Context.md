@@ -19,57 +19,33 @@ Current phase: Phase 3 — Arcade Gameplay (Phase 2 complete)
 The game currently has:
 
 - Vite project, TypeScript, HTML5 Canvas
-- Animated starfield and neon HUD (score, shield bar, stage/wave)
+- Animated starfield and neon HUD (score, high score, shield bar, stage/wave)
 - Player ship with WASD/arrow movement and Space to fire (with cooldown)
 - Stage system: stages contain waves, with a "STAGE COMPLETE" pause
-- Swaying enemy formations with entering, formation and diving states
-- Galaxian-style dive attacks and enemy projectiles
-- Collision detection (player lasers vs enemies, enemies vs player, enemy bullets vs player)
+- Enemies spawn in grid-shaped waves, with per-stage difficulty scaling
+- Enemy projectiles (enemies shoot at the player)
+- Collision detection (player lasers vs enemies, enemies vs player, enemy bullets vs player, player vs power-ups)
 - Explosions and particles
 - Score and shield systems
+- Power-ups: shield repair and timed double shot (10% drop chance on kill)
+- Persistent high score (localStorage)
 - Game over screen and restart (R)
 
+NOTE TO NEXT AI: CHANGELOG.md (2026-10-07) describes swaying formations
+with entering/formation/diving states and dive attacks. The Enemy.ts and
+SpawnSystem.ts shared on 2026-10-26 do NOT contain them (enemies move
+straight down). Confirm with the developer which version is current
+before changing enemy movement or spawning.
+
 Not implemented yet:
 
-- Power-ups and upgrades
 - Multiple enemy types
+- Combo/scoring mechanics
+- Permanent weapon and shield upgrades, special ability
 - Bosses
 - Audio
 - Menus
-- Save/progression system
-- High score
-
-Current phase: Phase 1 — Prototype
-
-The game currently has:
-
-- Vite project
-- TypeScript
-- HTML5 Canvas
-- Full-screen game canvas
-- Animated starfield
-- Player spaceship
-- WASD movement
-- Arrow-key movement
-- Screen boundary limits
-- Basic futuristic HUD
-- Neon cyan/magenta visual style
-
-Not implemented yet:
-
-- Player weapons
-- Projectiles
-- Enemies
-- Enemy spawning
-- Collision detection
-- Damage system
-- Score system
-- Power-ups
-- Levels
-- Bosses
-- Audio
-- Menus
-- Save/progression system
+- Save/progression system (beyond high score)
 
 ---
 
@@ -179,37 +155,26 @@ Refactor when a system becomes sufficiently complex.
 
 ## Current Source Structure
 
-Current important files:
-
-src/main.ts
+src/main.ts            game loop, input, starfield, HUD, shooting
 src/style.css
+src/entities/          Player, Enemy, Projectile, EnemyProjectile, PowerUp
+src/systems/           CollisionSystem, ParticleSystem, SpawnSystem, PowerUpSystem
+                       (WaveSystem.ts is unused, replaced by SpawnSystem)
 
-At this early prototype stage, some functionality is
-still intentionally contained in main.ts.
-
-This is temporary.
-
-As combat and gameplay systems are added, the code should
-be progressively separated into modules.
+main.ts still holds the starfield, HUD, input and shooting code.
+Extract these into modules (for example Starfield, HUD, InputManager)
+as they grow.
 
 ---
 
 ## Current Objective
 
-Build the first combat prototype.
+Phase 3 remaining work:
 
-Required sequence:
-
-1. Player weapon
-2. Projectile
-3. Enemy
-4. Enemy spawning
-5. Projectile/enemy collision
-6. Enemy destruction
-7. Score
-8. Player damage
-9. Game over
-10. Restart
+1. Multiple enemy types (for example scout and heavy)
+2. Combo/scoring mechanics
+3. Permanent weapon and shield upgrades
+4. Special ability
 
 ---
 

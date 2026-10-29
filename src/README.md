@@ -8,7 +8,7 @@ with modern visuals, effects, progression and gameplay.
 
 ## Status
 
-🚧 Early Development — Prototype
+🚧 Early Development — Phase 3 (Arcade Gameplay)
 
 ## Technology
 
@@ -20,27 +20,24 @@ with modern visuals, effects, progression and gameplay.
 
 ## Current Features
 
-- Shooting, enemy formations and dive attacks
+- Full-screen space environment with animated starfield
+- Futuristic player spaceship, neon HUD
+- Shooting with cooldown
+- Enemy waves, stages and difficulty scaling
 - Enemy fire, score, shield and game over
-- Stage and wave progression
-- Full-screen space environment
-- Animated starfield
-- Futuristic player spaceship
-- WASD controls
-- Arrow-key controls
-- Neon HUD
+- Power-ups: shield repair and timed double shot
+- Persistent high score
 
 ## Controls
 
-| SPACE | Fire |
-| R | Restart (after game over) |
 | Key | Action |
 |---|---|
 | W / ↑ | Move Up |
 | S / ↓ | Move Down |
 | A / ← | Move Left |
 | D / → | Move Right |
-| SPACE | Fire (planned) |
+| SPACE | Fire |
+| R | Restart (after game over) |
 
 ## Development
 
@@ -48,3 +45,16 @@ Install dependencies:
 
 ```bash
 npm install
+```
+
+Run the dev server:
+
+```bash
+npm run dev
+```
+
+Production build:
+
+```bash
+npm run build
+```
